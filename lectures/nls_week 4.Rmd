@@ -1,6 +1,6 @@
 ---
 title: "Non-linear least squares"
-subtitle: "ESM 244 W23"
+subtitle: "ESM 244 Week 4 Winter 2023"
 author: "Nathaniel Grimes"
 institute: "Bren School of Environmental Science"
 date: "1/22/2023"
@@ -19,6 +19,11 @@ output:
 knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning=FALSE)
 
 xaringanExtra::use_xaringan_extra(c("tile_view","clipboard","tachyons"))
+
+xaringanExtra::use_extra_styles(
+  hover_code_line = TRUE,       
+  mute_unhighlighted_code = TRUE  
+)
 
 ```
 
@@ -55,11 +60,12 @@ xaringanExtra::use_xaringan_extra(c("tile_view","clipboard","tachyons"))
 .chuge[
 ```{r loadds, echo=TRUE}
 library(tidyverse)
-#remotes::install_github("lter/lterdatasampler")
+remotes::install_github("lter/lterdatasampler")
 library(lterdatasampler)
 library(knitr)
 library(broom)
 library(investr)
+library(kableExtra)
 ```
 ]
 
@@ -201,18 +207,21 @@ $$
 
 ## General idea is very similar, but implementation and use is quite different
 
+???
+Notice the xB is replaced by a general function.
+
 ---
 # How NLS works
 
 ### No simple analytical solution like in OLS (Solve for $\hat\beta$)
 
-### .blue[Instead we iteratively approximate the solution through algorithms]
+### Instead we iteratively approximate the solution through algorithms
 
 - .big[Gauss-Newton (Most Common)]
 
 - .big[Levenberg-Marquardt (More flexible)]
 
-### .blue[In general the algorithms make an approximation of the functions gradient (think derivative), then move along until some convergence criteria is met]
+### In general the algorithms make an approximation of the functions gradient (think derivative), then move along until some convergence criteria is met
 
 $$
 |\frac{\overbrace{S^k}^{\text{Previous squared errror}}-\overbrace{S^{k+1}}^{\text{Updated squared error}}}{S^k}|<0.0001
@@ -225,13 +234,13 @@ $$
 .pull-left[![](https://i.stack.imgur.com/gdJ3v.gif)]
 
 .pull-right[
-### .blue[Global minimum at a=2.25]
+### Global minimum at a=2.25
 
-### .blue[Begins at initial guess of a=3.5]
+### Begins at initial guess of a=3.5
 
-### .blue[Step size depends on the 2nd order approximation]
+### Step size depends on the 2nd order approximation
 
-### .blue[Keeps going until the] .green[green line (first derivative)] .blue[ reaches close to zero]
+### Keeps going until the .green[green line (first derivative)] reaches close to zero
 ]
 
 ---
@@ -266,9 +275,9 @@ $$
 
 .pull-left[
 
-### .blue[NLS is only as good as the underlying model. Bring your brain to the party and make sure the model you're fitting is appropriate]
+### NLS is only as good as the underlying model. Bring your brain to the party and make sure the model you're fitting is appropriate
 
-### .blue[Follows gradient of steepest descent] $\rightarrow$ .blue[local min/max valleys]
+### Follows gradient of steepest descent $\rightarrow$ local min/max valleys
 
 - .big[With n-parameters chances of local min/max rises]
 ]
@@ -281,7 +290,7 @@ knitr::include_graphics("img/minmax.png")
 
 
 
-### .blue[Requires good initial guesses]
+### Requires good initial guesses
 
 - Comes from the underpinning algorithms
 ]
@@ -315,7 +324,7 @@ knz_bison_age <- knz_bison %>%
 ```
 
 
-```{r bisongraph, out.width="55%",fig.align='center'}
+```{r bisongraph, out.width="35%",fig.align='center'}
 knz_plt<-ggplot(data=knz_bison_age)+
   geom_point(aes(x=animal_age,y=animal_weight),size=1,alpha=0.2,color='purple')+
   theme_minimal()+
@@ -420,7 +429,7 @@ return(BM)
 ```{r nlsguess, echo=TRUE,eval=FALSE}
 df_nls<-nls(animal_weight~gompertz(b1,b2,b3,animal_age),   
             data=knz_bison_age,   
-            start=list(b1=?,b2=?,b3=?),
+            start=list(b1=?,b2=?,b3=?), #<<
             trace=TRUE )
 ```
 ]
@@ -478,7 +487,17 @@ b_gompertz<-nls(animal_weight~gompertz(b1,b2,b3,animal_age),
 # What did the model find?
 
 ```{r nlssummary,echo=TRUE,results=TRUE}
-summary(b_gompertz)
+tidy(b_gompertz) %>% 
+  kable() %>% 
+  kable_classic()
+
+```
+```{r nlsglance,echo=TRUE,results=TRUE}
+glance(b_gompertz) %>% 
+  kable() %>% 
+  kable_classic()
+
+
 ```
 
 ---
@@ -521,8 +540,8 @@ ggplot() +
 ```{r residual, echo=TRUE,results=TRUE}
 model_aug<-broom::augment(b_gompertz)
 
-sum_squared_error=sum((model_aug$.resid)^2)
-print(sum_squared_error)
+sum((model_aug$.resid)^2) # Sum of the squared error
+
 ```
 ]
 
@@ -539,7 +558,9 @@ conf<-as_tibble(predFit(b_gompertz,
             interval="confidence"),
             level=0.95) 
 conf$age=bison_f_predicted$age_series
-head(conf,n=4)
+head(conf,n=4) %>% 
+  kable() %>% 
+  kable_classic()
 
 #plot+geom_ribbon(data=conf...)
 ```
@@ -635,14 +656,14 @@ x&=g(x,c)
 # Optimization toolkit highlights
 
 
-## optim/optimx: Workhorse functions in R and probably the ones you will use the most
+### optim/optimx: Workhorse functions in R and probably the ones you will use the most
 
 - [Article on why we should move towards optimx](https://www.jstatsoft.org/article/download/v060i02/788)
 
-## quadprog: [Used by a GP I advised in 2021](https://www.fishwallet.net/)
+### quadprog: [Used by a GP I advised in 2021](https://www.fishwallet.net/)
 
-## GA: Genetic algorithms are the best global tool that I know of
+### GA: Genetic algorithms are the best global tool that I know of
 
-## NLoptr: [New project trying to keep syntax of alogrithms the same across computer languages](https://nlopt.readthedocs.io/en/latest/NLopt_Introduction/)
+### NLoptr: [New project trying to keep syntax of alogrithms the same across computer languages](https://nlopt.readthedocs.io/en/latest/NLopt_Introduction/)
 
-## [List of every optimization function with short descriptions](https://cran.r-project.org/web/views/Optimization.html)
+### [List of every optimization function with short descriptions](https://cran.r-project.org/web/views/Optimization.html)

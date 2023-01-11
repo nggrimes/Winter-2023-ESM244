@@ -4,7 +4,7 @@
     <title>Non-linear least squares</title>
     <meta charset="utf-8" />
     <meta name="author" content="Nathaniel Grimes" />
-    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.17/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/uwm-fonts.css" rel="stylesheet" />
     <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
     <script src="libs/tile-view-0.2.6/tile-view.js"></script>
@@ -13,6 +13,9 @@
     <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <link href="libs/xaringanExtra-extra-styles-0.2.6/xaringanExtra-extra-styles.css" rel="stylesheet" />
+    <script src="libs/kePrint-0.0.1/kePrint.js"></script>
+    <link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
     <link rel="stylesheet" href="ucsb.css" type="text/css" />
   </head>
   <body>
@@ -23,7 +26,7 @@ class: center, middle, inverse, title-slide
 # Non-linear least squares
 ]
 .subtitle[
-## ESM 244 W23
+## ESM 244 Week 4 Winter 2023
 ]
 .author[
 ### Nathaniel Grimes
@@ -74,11 +77,12 @@ class: center, middle, inverse, title-slide
 
 ```r
 library(tidyverse)
-#remotes::install_github("lter/lterdatasampler")
+remotes::install_github("lter/lterdatasampler")
 library(lterdatasampler)
 library(knitr)
 library(broom)
 library(investr)
+library(kableExtra)
 ```
 ]
 
@@ -187,18 +191,21 @@ $$
 
 ## General idea is very similar, but implementation and use is quite different
 
+???
+Notice the xB is replaced by a general function.
+
 ---
 # How NLS works
 
 ### No simple analytical solution like in OLS (Solve for `\(\hat\beta\)`)
 
-### .blue[Instead we iteratively approximate the solution through algorithms]
+### Instead we iteratively approximate the solution through algorithms
 
 - .big[Gauss-Newton (Most Common)]
 
 - .big[Levenberg-Marquardt (More flexible)]
 
-### .blue[In general the algorithms make an approximation of the functions gradient (think derivative), then move along until some convergence criteria is met]
+### In general the algorithms make an approximation of the functions gradient (think derivative), then move along until some convergence criteria is met
 
 $$
 |\frac{\overbrace{S^k}^{\text{Previous squared errror}}-\overbrace{S^{k+1}}^{\text{Updated squared error}}}{S^k}|&lt;0.0001
@@ -211,13 +218,13 @@ $$
 .pull-left[![](https://i.stack.imgur.com/gdJ3v.gif)]
 
 .pull-right[
-### .blue[Global minimum at a=2.25]
+### Global minimum at a=2.25
 
-### .blue[Begins at initial guess of a=3.5]
+### Begins at initial guess of a=3.5
 
-### .blue[Step size depends on the 2nd order approximation]
+### Step size depends on the 2nd order approximation
 
-### .blue[Keeps going until the] .green[green line (first derivative)] .blue[ reaches close to zero]
+### Keeps going until the .green[green line (first derivative)] reaches close to zero
 ]
 
 ---
@@ -252,9 +259,9 @@ $$
 
 .pull-left[
 
-### .blue[NLS is only as good as the underlying model. Bring your brain to the party and make sure the model you're fitting is appropriate]
+### NLS is only as good as the underlying model. Bring your brain to the party and make sure the model you're fitting is appropriate
 
-### .blue[Follows gradient of steepest descent] `\(\rightarrow\)` .blue[local min/max valleys]
+### Follows gradient of steepest descent `\(\rightarrow\)` local min/max valleys
 
 - .big[With n-parameters chances of local min/max rises]
 ]
@@ -265,7 +272,7 @@ $$
 
 
 
-### .blue[Requires good initial guesses]
+### Requires good initial guesses
 
 - Comes from the underpinning algorithms
 ]
@@ -298,7 +305,7 @@ knz_bison_age &lt;- knz_bison %&gt;%
 ```
 
 
-&lt;img src="nls_week-4_files/figure-html/bisongraph-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+&lt;img src="nls_week-4_files/figure-html/bisongraph-1.png" width="35%" style="display: block; margin: auto;" /&gt;
 
 ---
 # Use R Built in functions
@@ -370,7 +377,7 @@ return(BM)
 ```r
 df_nls&lt;-nls(animal_weight~gompertz(b1,b2,b3,animal_age),   
             data=knz_bison_age,   
-            start=list(b1=?,b2=?,b3=?),
+*           start=list(b1=?,b2=?,b3=?),
             trace=TRUE )
 ```
 ]
@@ -400,9 +407,9 @@ df_nls&lt;-nls(animal_weight~gompertz(b1,b2,b3,animal_age),
 
 Asymptotic body mass `\(b1\)` implies a max body length we could take the biggest observed female or generally look at the graph
 
-Age inflection point ($b3$) is where the curve starts bending
+Age inflection point `\(b3\)` is where the curve starts bending
 
-Instantaneous growth-rate ($b2$) is kind of weird, but you could manipulate a set Gompertz model to see how it changes the shape and try to match it.
+Instantaneous growth-rate `\(b2\)` is kind of weird, but you could manipulate a set Gompertz model to see how it changes the shape and try to match it.
 ]
 .pull-right[
 
@@ -422,11 +429,11 @@ b_gompertz&lt;-nls(animal_weight~gompertz(b1,b2,b3,animal_age),
 ```
 
 ```
-## 52917148 :  1e+03 1e+00 6e-01
-## 34426629 :  1007.2008456    0.6930941    0.3444975
-## 33207967 :  1009.6701568    0.7250854    0.2798164
-## 33206308 :  1009.7635726    0.7275290    0.2832794
-## 33206307 :  1009.7560207    0.7275973    0.2832921
+## 5.291715e+07 (7.61e-01): par = (1000 1 0.6)
+## 3.442663e+07 (1.91e-01): par = (1007.201 0.6930941 0.3444975)
+## 3.320797e+07 (7.02e-03): par = (1009.67 0.7250854 0.2798164)
+## 3.320631e+07 (1.28e-04): par = (1009.764 0.727529 0.2832794)
+## 3.320631e+07 (3.11e-06): par = (1009.756 0.7275973 0.2832921)
 ```
 ]
 
@@ -436,27 +443,80 @@ b_gompertz&lt;-nls(animal_weight~gompertz(b1,b2,b3,animal_age),
 
 
 ```r
-summary(b_gompertz)
+tidy(b_gompertz) %&gt;% 
+  kable() %&gt;% 
+  kable_classic()
 ```
 
+&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; term &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; estimate &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; std.error &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; statistic &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; p.value &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; b1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1009.7560207 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.9031134 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 530.58110 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; b2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.7275973 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.0075495 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 96.37640 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; b3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.2832921 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.0080643 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35.12912 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+```r
+glance(b_gompertz) %&gt;% 
+  kable() %&gt;% 
+  kable_classic()
 ```
-## 
-## Formula: animal_weight ~ gompertz(b1, b2, b3, animal_age)
-## 
-## Parameters:
-##     Estimate Std. Error t value Pr(&gt;|t|)    
-## b1 1.010e+03  1.903e+00  530.58   &lt;2e-16 ***
-## b2 7.276e-01  7.550e-03   96.38   &lt;2e-16 ***
-## b3 2.833e-01  8.064e-03   35.13   &lt;2e-16 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 81.12 on 5046 degrees of freedom
-## 
-## Number of iterations to convergence: 4 
-## Achieved convergence tolerance: 3.106e-06
-##   (236 observations deleted due to missingness)
-```
+
+&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; sigma &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; isConv &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; finTol &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; logLik &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; AIC &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; BIC &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; deviance &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; df.residual &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; nobs &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 81.12163 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; TRUE &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.1e-06 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -29357.87 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 58723.74 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 58749.85 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 33206307 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5046 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5049 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 
 ---
 
@@ -474,8 +534,7 @@ summary(b_gompertz)
 ```r
 model_aug&lt;-broom::augment(b_gompertz)
 
-sum_squared_error=sum((model_aug$.resid)^2)
-print(sum_squared_error)
+sum((model_aug$.resid)^2) # Sum of the squared error
 ```
 
 ```
@@ -497,18 +556,47 @@ conf&lt;-as_tibble(predFit(b_gompertz,
             interval="confidence"),
             level=0.95) 
 conf$age=bison_f_predicted$age_series
-head(conf,n=4)
+head(conf,n=4) %&gt;% 
+  kable() %&gt;% 
+  kable_classic()
 ```
 
-```
-## # A tibble: 4 x 4
-##     fit   lwr   upr   age
-##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1  295.  291.  300.   0  
-## 2  322.  318.  327.   0.1
-## 3  349.  345.  353.   0.2
-## 4  376.  372.  380.   0.3
-```
+&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; fit &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; lwr &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; upr &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; age &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 295.4679 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 290.6938 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 300.2419 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.0 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 322.0798 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 317.5501 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 326.6096 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 348.9703 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 344.6795 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 353.2612 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 375.9842 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 371.9130 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 380.0553 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 
 ```r
 #plot+geom_ribbon(data=conf...)
@@ -588,17 +676,17 @@ x&amp;=g(x,c)
 # Optimization toolkit highlights
 
 
-## optim/optimx: Workhorse functions in R and probably the ones you will use the most
+### optim/optimx: Workhorse functions in R and probably the ones you will use the most
 
 - [Article on why we should move towards optimx](https://www.jstatsoft.org/article/download/v060i02/788)
 
-## quadprog: [Used by a GP I advised in 2021](https://www.fishwallet.net/)
+### quadprog: [Used by a GP I advised in 2021](https://www.fishwallet.net/)
 
-## GA: Genetic algorithms are the best global tool that I know of
+### GA: Genetic algorithms are the best global tool that I know of
 
-## NLoptr: [New project trying to keep syntax of alogrithms the same across computer languages](https://nlopt.readthedocs.io/en/latest/NLopt_Introduction/)
+### NLoptr: [New project trying to keep syntax of alogrithms the same across computer languages](https://nlopt.readthedocs.io/en/latest/NLopt_Introduction/)
 
-## [List of every optimization function with short descriptions](https://cran.r-project.org/web/views/Optimization.html)
+### [List of every optimization function with short descriptions](https://cran.r-project.org/web/views/Optimization.html)
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
