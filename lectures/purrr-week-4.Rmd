@@ -1,0 +1,223 @@
+---
+title: "Using purrr in R"
+subtitle: "ESM 244 Week 4 Winter 2023"
+author: "Nathaniel Grimes"
+institute: "Bren School of Environmental Science"
+date: "1/22/2023"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: ["ucsb.css","uwm-fonts"]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message = FALSE,warning=FALSE)
+
+xaringanExtra::use_xaringan_extra(c("tile_view","clipboard","tachyons"))
+
+xaringanExtra::use_extra_styles(
+  hover_code_line = TRUE,       
+  mute_unhighlighted_code = TRUE  
+)
+
+```
+
+
+# Packages to follow along with
+
+.chuge[
+```{r loadds, echo=TRUE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+```
+]
+
+---
+class: title-slide-section-blue, center, middle
+
+# Purrr
+
+---
+
+# Data science relies on computer iterating power
+
+We couldn't do what we do without the computer doing things thousands to millions of times, really fast
+
+For loops are useful tools, but have limitations
+
+- Doesn't integrate into tidyverse very well
+
+- Difficult to interpret
+
+- Nesting is confusing
+
+- One error breaks the whole process
+
+- Can be slow if not constructred properly
+
+R is a functional (i.e we use functions to get stuff done) language, why not use a functional iterative process?
+
+---
+
+# Introducing mapping with purrr
+
+```{r,out.width="20%",fig.align='center',echo=FALSE}
+include_graphics("https://d33wubrfki0l68.cloudfront.net/2d0701b616efa7435cd5a94e703baa595a4f9ed0/d41b9/css/images/hex/purrr.png")
+```
+
+
+
+
+.cbig[
+```{r,eval=FALSE}
+map(.x,  # What are we evaluating or passing through to a function?
+    .f,  # The function itself
+    ...  # Extra features for the function or mapping options
+    )
+```
+]
+
+### Because the first element is data or information, map works really well in pipes
+---
+
+# Quickly apply functions to all columns of data
+
+```{r}
+mtcars %>% 
+  map(mean)%>% 
+  kable() %>% 
+  kable_classic()
+```
+
+### Map returns the results as a list
+
+- You've encountered lists before. Regression outputs, ggplots, etc. are all stored as lists in R. They are the most flexible storage object followed by tibbles.
+
+---
+
+# Easy to change how map returns output using map_\* where \* is an abbreviation for any object
+
+```{r}
+mtcars %>% 
+  map_dbl(mean) %>%  # dbl is short for double e.g numbers
+  head() %>% kable() %>%
+  kable_classic()
+```
+
+
+### [Checkout the cheatsheet for all the information](https://github.com/rstudio/cheatsheets/blob/main/purrr.pdf)
+
+???
+ Why not just use built in functions like summarize, col_means, etc.? 
+ 
+ Less code, easier, and map can use any function that we make for complex tasks
+ 
+---
+
+# We can use or design any function to accomplish our tasks
+
+### Imagine you are tasked with running regressions over subsets of data each with different regressions specifications how would you do it?
+
+```{r,eval=FALSE}
+mod1=lm(y~x,data=filter(thing1,df))
+mod2=lm(y~x,data=filter(thing2,df))
+....
+```
+
+### Map can apply regressions to any number of subsets
+
+```{r,results=FALSE}
+mtcars %>% 
+  split(mtcars$cyl) %>%   #split is a base R so not part of the tidyverse
+  map(~lm(mpg~wt,data = .)) # the . is passed from the pipe with .x of map
+```
+
+### Only 3 cylinders in the dataset, but there could have been 1,000 and the code above would store 1,000 regression models
+
+---
+
+# Map can loop over multiple lists of data simultaneously with map2 and pmap
+
+```{r}
+by_cyl <- mtcars %>%  split(mtcars$cyl)  # Store the dataset for predictions
+
+mods <- by_cyl %>%  map(~lm(mpg ~ wt, data = .))
+
+map2(mods, by_cyl, predict)  # Take my linear mods and use the data to predict mpg
+```
+```{r,eval=FALSE}
+map2(.x,  # dataset 1
+     .y,  # dataset 2
+     .f(x,y,...),  # the function the accepts dataset1 and dataset2 
+     ...
+     )
+```
+
+
+### pmap lets us put in any number of inputs as a list
+
+---
+
+# Like For Loops, map requires careful thought to make sure everything works
+
+1. What am I trying to accomplish?
+
+2. How is my data currently stored?
+
+3. How will my data be passed to map?
+
+4. Build (or use) a function that accepts everything
+
+### I've used map to iterate bioeconomic models over 100,000s of parameter combinations, and run machine learning algorithms on 1000s of datasets
+
+### Beyond this class you will encounter big datasets, purrr is the best way to handle enourmous dataframes
+
+---
+class: title-slide-section-blue, center, middle
+
+# Extra fun things
+
+---
+
+# map can catch errors 
+
+1. Won't break the entire process so you have to start again. Nothing hurts more than running code for hours to get an error at the end.
+
+2. You know what models ran into errors in the future
+
+`safely()` and `possibly()` store errors and allow you to return errors respectively
+
+---
+
+# Sets up parallel processing!
+
+The furrr package allows you to access your computer or server's multiple cores
+
+Speeds everything up exponentially
+
+---
+
+# Progess bars
+
+Tired of waiting for code to run and you have no idea how long it will take?
+
+purrr comes with built in progress bars to see how long its taking
+
+```{r}
+library(purrr)
+x<-map(1:50,\(x) Sys.sleep(0.1),
+       .progress=TRUE)
+
+
+
+```
+
+
+
+

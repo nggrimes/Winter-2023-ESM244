@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Using purrr in R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Nathaniel Grimes" />
+    <script src="libs/header-attrs-2.17/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/uwm-fonts.css" rel="stylesheet" />
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link href="libs/tachyons-4.12.0/tachyons.min.css" rel="stylesheet" />
+    <script src="libs/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <link href="libs/xaringanExtra-extra-styles-0.2.6/xaringanExtra-extra-styles.css" rel="stylesheet" />
+    <script src="libs/kePrint-0.0.1/kePrint.js"></script>
+    <link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="ucsb.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Using purrr in R
+]
+.subtitle[
+## ESM 244 Week 4 Winter 2023
+]
+.author[
+### Nathaniel Grimes
+]
+.institute[
+### Bren School of Environmental Science
+]
+.date[
+### 1/22/2023
+]
+
+---
+
+
+
+
+
+# Packages to follow along with
+
+.chuge[
+
+```r
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+```
+]
+
+---
+class: title-slide-section-blue, center, middle
+
+# Purrr
+
+---
+
+# Data science relies on computer iterating power
+
+We couldn't do what we do without the computer doing things thousands to millions of times, really fast
+
+For loops are useful tools, but have limitations
+
+- Doesn't integrate into tidyverse very well
+
+- Difficult to interpret
+
+- Nesting is confusing
+
+- One error breaks the whole process
+
+- Can be slow if not constructred properly
+
+R is a functional (i.e we use functions to get stuff done) language, why not use a functional iterative process?
+
+---
+
+# Introducing mapping with purrr
+
+&lt;img src="https://d33wubrfki0l68.cloudfront.net/2d0701b616efa7435cd5a94e703baa595a4f9ed0/d41b9/css/images/hex/purrr.png" width="20%" style="display: block; margin: auto;" /&gt;
+
+
+
+
+.cbig[
+
+```r
+map(.x,  # What are we evaluating or passing through to a function?
+    .f,  # The function itself
+    ...  # Extra features for the function or mapping options
+    )
+```
+]
+
+### Because the first element is data or information, map works really well in pipes
+---
+
+# Quickly apply functions to all columns of data
+
+
+```r
+mtcars %&gt;% 
+  map(mean)%&gt;% 
+  kable() %&gt;% 
+  kable_classic()
+```
+
+&lt;table class="kable_wrapper lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto;'&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td&gt; 
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 20.09062 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;/td&gt;
+   &lt;td&gt; 
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 6.1875 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;/td&gt;
+   &lt;td&gt; 
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 230.7219 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;/td&gt;
+   &lt;td&gt; 
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 146.6875 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;/td&gt;
+   &lt;td&gt; 
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3.596563 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;/td&gt;
+   &lt;td&gt; 
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3.21725 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;/td&gt;
+   &lt;td&gt; 
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 17.84875 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;/td&gt;
+   &lt;td&gt; 
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.4375 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;/td&gt;
+   &lt;td&gt; 
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.40625 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;/td&gt;
+   &lt;td&gt; 
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3.6875 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;/td&gt;
+   &lt;td&gt; 
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2.8125 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+ &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+### Map returns the results as a list
+
+- You've encountered lists before. Regression outputs, ggplots, etc. are all stored as lists in R. They are the most flexible storage object followed by tibbles.
+
+---
+
+# Easy to change how map returns output using map_\* where \* is an abbreviation for any object
+
+
+```r
+mtcars %&gt;% 
+  map_dbl(mean) %&gt;%  # dbl is short for double e.g numbers
+  head() %&gt;% kable() %&gt;%
+  kable_classic()
+```
+
+&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; mpg &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20.090625 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; cyl &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6.187500 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; disp &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 230.721875 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; hp &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 146.687500 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; drat &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.596563 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; wt &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.217250 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+### [Checkout the cheatsheet for all the information](https://github.com/rstudio/cheatsheets/blob/main/purrr.pdf)
+
+???
+ Why not just use built in functions like summarize, col_means, etc.? 
+ 
+ Less code, easier, and map can use any function that we make for complex tasks
+ 
+---
+
+# We can use or design any function to accomplish our tasks
+
+### Imagine you are tasked with running regressions over subsets of data each with different regressions specifications how would you do it?
+
+
+```r
+mod1=lm(y~x,data=filter(thing1,df))
+mod2=lm(y~x,data=filter(thing2,df))
+....
+```
+
+### Map can apply regressions to any number of subsets
+
+
+```r
+mtcars %&gt;% 
+  split(mtcars$cyl) %&gt;%   #split is a base R so not part of the tidyverse
+  map(~lm(mpg~wt,data = .)) # the . is passed from the pipe with .x of map
+```
+
+### Only 3 cylinders in the dataset, but there could have been 1,000 and the code above would store 1,000 regression models
+
+---
+
+# Map can loop over multiple lists of data simultaneously with map2 and pmap
+
+
+```r
+by_cyl &lt;- mtcars %&gt;%  split(mtcars$cyl)  # Store the dataset for predictions
+
+mods &lt;- by_cyl %&gt;%  map(~lm(mpg ~ wt, data = .))
+
+map2(mods, by_cyl, predict)  # Take my linear mods and use the data to predict mpg
+```
+
+```
+## $`4`
+##     Datsun 710      Merc 240D       Merc 230       Fiat 128    Honda Civic 
+##       26.47010       21.55719       21.78307       27.14774       30.45125 
+## Toyota Corolla  Toyota Corona      Fiat X1-9  Porsche 914-2   Lotus Europa 
+##       29.20890       25.65128       28.64420       27.48656       31.02725 
+##     Volvo 142E 
+##       23.87247 
+## 
+## $`6`
+##      Mazda RX4  Mazda RX4 Wag Hornet 4 Drive        Valiant       Merc 280 
+##       21.12497       20.41604       19.47080       18.78968       18.84528 
+##      Merc 280C   Ferrari Dino 
+##       18.84528       20.70795 
+## 
+## $`8`
+##   Hornet Sportabout          Duster 360          Merc 450SE          Merc 450SL 
+##            16.32604            16.04103            14.94481            15.69024 
+##         Merc 450SLC  Cadillac Fleetwood Lincoln Continental   Chrysler Imperial 
+##            15.58061            12.35773            11.97625            12.14945 
+##    Dodge Challenger         AMC Javelin          Camaro Z28    Pontiac Firebird 
+##            16.15065            16.33700            15.44907            15.43811 
+##      Ford Pantera L       Maserati Bora 
+##            16.91800            16.04103
+```
+
+```r
+map2(.x,  # dataset 1
+     .y,  # dataset 2
+     .f(x,y,...),  # the function the accepts dataset1 and dataset2 
+     ...
+     )
+```
+
+
+### pmap lets us put in any number of inputs as a list
+
+---
+
+# Like For Loops, map requires careful thought to make sure everything works
+
+1. What am I trying to accomplish?
+
+2. How is my data currently stored?
+
+3. How will my data be passed to map?
+
+4. Build (or use) a function that accepts everything
+
+### I've used map to iterate bioeconomic models over 100,000s of parameter combinations, and run machine learning algorithms on 1000s of datasets
+
+### Beyond this class you will encounter big datasets, purrr is the best way to handle enourmous dataframes
+
+---
+class: title-slide-section-blue, center, middle
+
+# Extra fun things
+
+---
+
+# map can catch errors 
+
+1. Won't break the entire process so you have to start again. Nothing hurts more than running code for hours to get an error at the end.
+
+2. You know what models ran into errors in the future
+
+`safely()` and `possibly()` store errors and allow you to return errors respectively
+
+---
+
+# Sets up parallel processing!
+
+The furrr package allows you to access your computer or server's multiple cores
+
+Speeds everything up exponentially
+
+---
+
+# Progess bars
+
+Tired of waiting for code to run and you have no idea how long it will take?
+
+purrr comes with built in progress bars to see how long its taking
+
+
+```r
+library(purrr)
+x&lt;-map(1:50,\(x) Sys.sleep(0.1),
+       .progress=TRUE)
+
+
+library(progressr)
+fn &lt;- function(x, p) {
+  p()
+  Sys.sleep(.2)
+  sum(x)
+}
+
+
+with_progress({
+  p &lt;- progressor(steps = length(x))
+  result &lt;- map(x, fn, p = p)
+})
+```
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
