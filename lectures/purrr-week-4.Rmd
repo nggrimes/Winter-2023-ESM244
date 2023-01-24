@@ -144,13 +144,6 @@ mtcars %>%
 
 # Map can loop over multiple lists of data simultaneously with map2 and pmap
 
-```{r}
-by_cyl <- mtcars %>%  split(mtcars$cyl)  # Store the dataset for predictions
-
-mods <- by_cyl %>%  map(~lm(mpg ~ wt, data = .))
-
-map2(mods, by_cyl, predict)  # Take my linear mods and use the data to predict mpg
-```
 ```{r,eval=FALSE}
 map2(.x,  # dataset 1
      .y,  # dataset 2
@@ -158,6 +151,15 @@ map2(.x,  # dataset 1
      ...
      )
 ```
+
+```{r}
+by_cyl <- mtcars %>%  split(mtcars$cyl)  # Store the dataset for predictions
+
+mods <- by_cyl %>%  map(~lm(mpg ~ wt, data = .))
+
+predictions<-map2(mods, by_cyl, predict) # Take my linear mods and use the data to predict mpg
+```
+
 
 
 ### pmap lets us put in any number of inputs as a list
@@ -192,6 +194,25 @@ class: title-slide-section-blue, center, middle
 2. You know what models ran into errors in the future
 
 `safely()` and `possibly()` store errors and allow you to return errors respectively
+.csmall[
+```{r}
+# Make up some data
+dat = structure(list(group = c("a", "a", "a", "a", "a", "a", "b", "b", "b"), 
+                     x = c("A", "A", "A", "B", "B", "B", "A", "A", "A"), 
+                     y = c(10.9, 11.1, 10.5, 9.7, 10.5, 10.9, 13, 9.9, 10.3)), 
+                class = "data.frame", row.names = c(NA, -9L))
+
+#Define safe lm function
+safelm=safely(.f=lm)
+
+dat %>% 
+  split(dat$group) %>%
+  map(~safelm(y~x,data=.x)) %>% 
+  map("error") # Pull out errors
+  
+
+```
+]
 
 ---
 
@@ -200,6 +221,36 @@ class: title-slide-section-blue, center, middle
 The furrr package allows you to access your computer or server's multiple cores
 
 Speeds everything up exponentially
+
+Works just like purrr map, but sends blocks of data to your computers other cores
+
+.pull-left[
+```{r}
+library(tictoc)
+library(furrr)
+
+plan(sequential)
+
+#Run code to pause the computer for two seconds
+tic()
+test_slow<-future_map(c(2,2,2),~Sys.sleep(.x))
+toc()
+
+```
+]
+
+.pull-right[
+```{r}
+#tell the computer we want to use three of our cores
+plan(multisession,workers=3)
+
+#Start a timer then run code to pause the computer for 2 seconds
+tic()
+test_fast<-future_map(c(2,2,2),~Sys.sleep(.x))
+toc()
+```
+
+]
 
 ---
 
@@ -213,9 +264,7 @@ purrr comes with built in progress bars to see how long its taking
 library(purrr)
 x<-map(1:50,\(x) Sys.sleep(0.1),
        .progress=TRUE)
-
-
-
+# Notice I used an anonymous function
 ```
 
 

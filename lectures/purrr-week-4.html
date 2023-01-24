@@ -4,7 +4,7 @@
     <title>Using purrr in R</title>
     <meta charset="utf-8" />
     <meta name="author" content="Nathaniel Grimes" />
-    <script src="libs/header-attrs-2.17/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.19/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/uwm-fonts.css" rel="stylesheet" />
     <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
     <script src="libs/tile-view-0.2.6/tile-view.js"></script>
@@ -384,46 +384,22 @@ mtcars %&gt;%
 
 
 ```r
-by_cyl &lt;- mtcars %&gt;%  split(mtcars$cyl)  # Store the dataset for predictions
-
-mods &lt;- by_cyl %&gt;%  map(~lm(mpg ~ wt, data = .))
-
-map2(mods, by_cyl, predict)  # Take my linear mods and use the data to predict mpg
-```
-
-```
-## $`4`
-##     Datsun 710      Merc 240D       Merc 230       Fiat 128    Honda Civic 
-##       26.47010       21.55719       21.78307       27.14774       30.45125 
-## Toyota Corolla  Toyota Corona      Fiat X1-9  Porsche 914-2   Lotus Europa 
-##       29.20890       25.65128       28.64420       27.48656       31.02725 
-##     Volvo 142E 
-##       23.87247 
-## 
-## $`6`
-##      Mazda RX4  Mazda RX4 Wag Hornet 4 Drive        Valiant       Merc 280 
-##       21.12497       20.41604       19.47080       18.78968       18.84528 
-##      Merc 280C   Ferrari Dino 
-##       18.84528       20.70795 
-## 
-## $`8`
-##   Hornet Sportabout          Duster 360          Merc 450SE          Merc 450SL 
-##            16.32604            16.04103            14.94481            15.69024 
-##         Merc 450SLC  Cadillac Fleetwood Lincoln Continental   Chrysler Imperial 
-##            15.58061            12.35773            11.97625            12.14945 
-##    Dodge Challenger         AMC Javelin          Camaro Z28    Pontiac Firebird 
-##            16.15065            16.33700            15.44907            15.43811 
-##      Ford Pantera L       Maserati Bora 
-##            16.91800            16.04103
-```
-
-```r
 map2(.x,  # dataset 1
      .y,  # dataset 2
      .f(x,y,...),  # the function the accepts dataset1 and dataset2 
      ...
      )
 ```
+
+
+```r
+by_cyl &lt;- mtcars %&gt;%  split(mtcars$cyl)  # Store the dataset for predictions
+
+mods &lt;- by_cyl %&gt;%  map(~lm(mpg ~ wt, data = .))
+
+predictions&lt;-map2(mods, by_cyl, predict) # Take my linear mods and use the data to predict mpg
+```
+
 
 
 ### pmap lets us put in any number of inputs as a list
@@ -458,6 +434,32 @@ class: title-slide-section-blue, center, middle
 2. You know what models ran into errors in the future
 
 `safely()` and `possibly()` store errors and allow you to return errors respectively
+.csmall[
+
+```r
+# Make up some data
+dat = structure(list(group = c("a", "a", "a", "a", "a", "a", "b", "b", "b"), 
+                     x = c("A", "A", "A", "B", "B", "B", "A", "A", "A"), 
+                     y = c(10.9, 11.1, 10.5, 9.7, 10.5, 10.9, 13, 9.9, 10.3)), 
+                class = "data.frame", row.names = c(NA, -9L))
+
+#Define safe lm function
+safelm=safely(.f=lm)
+
+dat %&gt;% 
+  split(dat$group) %&gt;%
+  map(~safelm(y~x,data=.x)) %&gt;% 
+  map("error") # Pull out errors
+```
+
+```
+## $a
+## NULL
+## 
+## $b
+## &lt;simpleError in `contrasts&lt;-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels&gt;
+```
+]
 
 ---
 
@@ -466,6 +468,45 @@ class: title-slide-section-blue, center, middle
 The furrr package allows you to access your computer or server's multiple cores
 
 Speeds everything up exponentially
+
+Works just like purrr map, but sends blocks of data to your computers other cores
+
+.pull-left[
+
+```r
+library(tictoc)
+library(furrr)
+
+plan(sequential)
+
+#Run code to pause the computer for two seconds
+tic()
+test_slow&lt;-future_map(c(2,2,2),~Sys.sleep(.x))
+toc()
+```
+
+```
+## 6.19 sec elapsed
+```
+]
+
+.pull-right[
+
+```r
+#tell the computer we want to use three of our cores
+plan(multisession,workers=3)
+
+#Start a timer then run code to pause the computer for 2 seconds
+tic()
+test_fast&lt;-future_map(c(2,2,2),~Sys.sleep(.x))
+toc()
+```
+
+```
+## 3.39 sec elapsed
+```
+
+]
 
 ---
 
@@ -480,20 +521,7 @@ purrr comes with built in progress bars to see how long its taking
 library(purrr)
 x&lt;-map(1:50,\(x) Sys.sleep(0.1),
        .progress=TRUE)
-
-
-library(progressr)
-fn &lt;- function(x, p) {
-  p()
-  Sys.sleep(.2)
-  sum(x)
-}
-
-
-with_progress({
-  p &lt;- progressor(steps = length(x))
-  result &lt;- map(x, fn, p = p)
-})
+# Notice I used an anonymous function
 ```
 
 
