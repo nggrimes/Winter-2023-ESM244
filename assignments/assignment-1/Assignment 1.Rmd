@@ -1,7 +1,7 @@
 ---
 title: "Assignment 1"
 author: "Nathan Grimes"
-date: "1/12/2022"
+date: "1/12/2023"
 output: html_document
 ---
 
@@ -69,11 +69,16 @@ p1/p2
 
 ## Task 2 Model Selection
 
+### AIC
+
 ```{r seawater_data}
 
 seawater_raw<-read.csv("calcofi_seawater_samples.csv",sep=",")
 
 #Create the models
+
+f1=o2sat~t_deg_c+salinity+po4u_m
+f2=o2sat~t_deg_c+salinity+po4u_m+depth_m
 
 model1<-lm(o2sat~t_deg_c+salinity+po4u_m,data=seawater_raw)
 model2<-lm(o2sat~t_deg_c+salinity+po4u_m+depth_m,data=seawater_raw)
@@ -84,7 +89,16 @@ models<-list(model1,model2)
 mod.names<-c("no.depth","depth")
 aictab(cand.set=models,modnames=mod.names)
 ```
+
 Select the models based on AIC performance. The linear model including depth performed significantly better based on the $\Delta AIC$ greater than 2. 
+
+### BIC
+
+```{r}
+bictab(models,mod.names)
+```
+
+### Use Caret
 
 ```{r CV}
 set.seed(123) #Don't want the computer to shift the random breaks everytime we knit
@@ -116,3 +130,69 @@ final_model<-lm(o2sat~t_deg_c+salinity+po4u_m+depth_m,data=seawater_raw)
 summary(final_model)
 ```
 
+### Use a for loop
+
+```{r}
+
+calc_rmse <- function(x, y) {
+  rmse <- (x - y)^2 %>% mean() %>% sqrt()
+  return(rmse)
+}
+
+folds=10
+
+n_iter=10  # do folds 10 times
+
+fold_vec=rep(1:folds,length.out=nrow(seawater_raw)*n_iter)
+
+
+fold_mat=matrix(fold_vec,ncol=n_iter)
+
+samp=as.data.frame(fold_mat) %>% 
+  map(.x=.,~sample(.x,size=nrow(seawater_raw),replace=FALSE))
+
+#Set up storage matrices
+
+rmse_df<-data.frame()
+
+for(j in 1:n_iter){
+  for(i in 1:folds){
+  kfold_test_df<-seawater_raw %>% 
+    mutate(group=samp[[j]]) %>% 
+    filter(group==i)
+  
+   kfold_train_df<-seawater_raw %>% 
+    mutate(group=samp[[j]]) %>% 
+    filter(group!=i)
+   
+   ## Train models
+   
+   kfold_lm1=lm(f1,data=kfold_train_df)
+   kfold_lm2=lm(f2,data=kfold_train_df)
+  
+   # Test
+   kfold_pred_df<-kfold_test_df %>% 
+     mutate(mdl1=predict(kfold_lm1,.),
+            mdl2=predict(kfold_lm2,.))
+   
+   kfold_rmse=kfold_pred_df %>% 
+     summarize(rmse_mdl1=calc_rmse(mdl1,o2sat),
+               rmse_mdl2=calc_rmse(mdl2,o2sat),
+               test_gp=i,
+               iter=j)
+   
+   rmse_df<-rbind(rmse_df,kfold_rmse)
+  
+  }
+
+}
+
+rmse_df %>% 
+  summarize(mean_mdl1 = mean(rmse_mdl1),
+            mean_mdl2=mean(rmse_mdl2))
+
+
+```
+
+
+### Use tidymodels
