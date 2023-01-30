@@ -7,7 +7,7 @@ date: "1/22/2023"
 output:
   xaringan::moon_reader:
     lib_dir: libs
-    css: ["ucsb.css","uwm-fonts"]
+    css: ["bren.css","uwm-fonts"]
     nature:
       highlightStyle: github
       highlightLines: true
@@ -437,19 +437,25 @@ df_nls<-nls(animal_weight~gompertz(b1,b2,b3,animal_age),
 ## The initial guesses and data also tell nls which variables are we trying to find and which data are we comparing
 
 ---
+class: bold-last-item 
 
 # 4 methods for providing guesses
 
-.big[1) Use past parameters from similar studies
-]
 
-.big[2) Use data to internally define guesses (min, mean, max, etc.)]
+1. Use past parameters from similar studies
 
-.big[3) In 2-D, look at the graphs and estimate
-]
+--
 
-.big[4) In N-D, combine steps 1-2 then create a start grid to search over
-]
+2. Use data to internally define guesses (min, mean, max, etc.)
+
+--
+
+3. In 2-D, look at the graphs and estimate
+
+--
+
+4. In N-D, combine steps 1-2 then create a start grid to search over
+
 ---
 
 # Applied guessing
@@ -588,7 +594,7 @@ ggplot() +
 
 ---
 
-class: title-slide-section-blue, center, middle
+class: title-slide-section-green, center, middle
 
 # Optimization in the stats world
 
@@ -602,19 +608,19 @@ background-size: cover
 
 
 .bg-white.b--dark-green.ba.bw2.br3.shadow-5.ph1.mt2.w-50[
-## Our World of Machine Learning]
+# Our World of Machine Learning]
 
 
 --
 
 .bg-white.b--dark-green.ba.bw2.br3.shadow-5.ph1.mt5.w-50[
- ## Non-Linear Least Squares ]
+ # Non-Linear Least Squares ]
 
 
 --
 
 .bg-white.b--dark-green.ba.bw2.br3.shadow-5.ph1.mt5.w-50[
-.center[## The world of optimization]]
+.center[# The world of optimization]]
 
 ---
 
@@ -649,7 +655,7 @@ x&=g(x,c)
 
 - How many/form of parameters?
 
-<uc-blockquote> Best to use methods that you understand than ones you don't </uc-blockquote>
+<bren-blockquote> Best to use methods that you understand than ones you don't </uc-blockquote>
 
 ---
 
@@ -667,3 +673,10 @@ x&=g(x,c)
 ### NLoptr: [New project trying to keep syntax of alogrithms the same across computer languages](https://nlopt.readthedocs.io/en/latest/NLopt_Introduction/)
 
 ### [List of every optimization function with short descriptions](https://cran.r-project.org/web/views/Optimization.html)
+
+---
+class: title-slide-final, center, middle
+
+# Thank you for listening
+
+## Stop by office hours anytime
