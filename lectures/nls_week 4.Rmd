@@ -210,6 +210,43 @@ $$
 ???
 Notice the xB is replaced by a general function.
 
+
+---
+
+# But what function should we use?
+
+## The one best suited for the phenomena we're trying to explain
+
+.pull-left[
+[Radar Propagation:](https://agupubs.onlinelibrary.wiley.com/doi/pdfdirect/10.1002/2014RS005642) $M(z)=M_0+c_0(x-z_d *ln(\frac{x+z_0}{z_0}))$
+
+(Environmental Refractivity)
+
+[Fisheries:](https://www.pnas.org/content/110/5/1779) $\hat{S_t}=-e*MSY(\frac{x_t}{K})\ln(\frac{x_t}{K})$ 
+
+(Fox Model we'll use in lab this week)
+
+[Ecology:](https://onlinelibrary.wiley.com/doi/pdfdirect/10.1111/j.1365-2699.2009.02101.x)
+$sp=ax^b$
+
+(Species-Area Model)] 
+
+
+.pull-right[
+[Agriculture:](https://www.tandfonline.com/doi/epdf/10.1080/09535314.2014.926266?needAccess=true&role=button) $y=\gamma(\sum^n_{i=1}\alpha_ix_i^{-\rho})^\frac{1}{-\rho}$
+
+(Production elasticity)
+
+[Economics](https://academic.oup.com/icesjms/article/40/3/211/620770) $l_t=L_{\infty}(1-exp[-k(x-t_0)])$
+
+(von Vertalanffy growth)
+
+[Wind Turbines:](https://www.sciencedirect.com/science/article/pii/S096014811730544X) $p_{max}=\frac{a_1e^{a_2x}-a_3e^{-a_4x}}{a_5e^{a_6x}+a_7e^{-a_8x}}+a_9$
+
+(Max power hyperbolic tangent function)
+]
+
+I put all data inputs as $x$ in the above equations. This might break naming convention in case you're familiar with an equation. Everything else are the parameters to be estimated by nls.
 ---
 # How NLS works
 
@@ -294,19 +331,6 @@ knitr::include_graphics("img/minmax.png")
 
 - Comes from the underpinning algorithms
 ]
-
----
-
-# Know when to use NLS or another option
-
-```{r, out.width="55%",fig.align='center'}
-knitr::include_graphics("img/vtrpe_run.PNG")
-```
-
-
-### In this research we ended up using Genetic Algorithms instead as they provide global solutions without having to guess
-
-### Operationally, the Navy doesn't have time to guess
 
 ---
 class: title-slide-section-blue, center, middle
@@ -460,21 +484,9 @@ class: bold-last-item
 
 # Applied guessing
 
-.pull-left[
-.bold[How we could use step 2 and 3 in this case?]
 
-Asymptotic body mass $b1$ implies a max body length we could take the biggest observed female or generally look at the graph
+<iframe src="https://nggrimes.shinyapps.io/bison_app" style="width: 1000px; height: 400px; border: 0"></iframe>
 
-Age inflection point $b3$ is where the curve starts bending
-
-Instantaneous growth-rate $b2$ is kind of weird, but you could manipulate a set Gompertz model to see how it changes the shape and try to match it.
-]
-.pull-right[
-
-```{r combeinplot, out.height='50%',fig.align='center'}
-knz_plt+ geom_line(data=df1,aes(x=age,y=weight),color="blue",size=2)
-```
-]
 ---
 
 # Apply guesses
