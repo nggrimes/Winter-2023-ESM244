@@ -5,9 +5,9 @@ account: nggrimes
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 8172713
-bundleId: 6791247
+bundleId: 6791342
 url: https://nggrimes.shinyapps.io/bison_app/
-when: 1675117680.83021
-lastSyncTime: 1675117680.83023
+when: 1675119792.76078
+lastSyncTime: 1675119792.7608
 asMultiple: FALSE
 asStatic: FALSE

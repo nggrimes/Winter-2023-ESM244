@@ -493,6 +493,7 @@ class: bold-last-item
 
 <iframe src="https://nggrimes.shinyapps.io/bison_app" style="width: 1000px; height: 400px; border: 0"></iframe>
 
+$$Weight=b1*exp(-exp(-b2*(age-b3)))$$
 ---
 
 # Apply guesses
