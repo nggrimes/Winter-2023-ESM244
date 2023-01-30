@@ -148,7 +148,7 @@ $\hat\beta=\min_\beta \sum^n_{i=1}\hat{\epsilon_i}^2=\sum^n_{i=1}(y_i-\beta x_i)
 
 ## Linear relationship between predictor (y) and variables (x)
 
-## Last week we started branching away from linear models with logistic regressions 
+## Last week we started branching away from strictly linear models with logistic regressions 
 
 ## But the link functions typically still maintain a linear form
 
@@ -265,9 +265,9 @@ $$
 
 ## NLS excels when we have a known equation and want to fit parameters 
 
-## There is no $R^2$ value to compare across model specifications, but we can still test model performance using AIC or Cross Fold Validation through RMSE (In lab this week!)
+## There is no $R^2$ value to compare across model specifications, but we can still test model performance using AIC, Cross Fold Validation or RMSE (In lab this week!)
 
-## NLS is particularly useful for time series, but we will cover other methods for time series later in class.
+## NLS is particularly useful for time series as we'll see in lab.
 
 ---
 
@@ -623,7 +623,7 @@ background-size: cover
 
 ## Many flavors and varieties of optimization
 
-## As simply as possible
+## As general as possible
 
 
 $$\begin{aligned}

@@ -4,7 +4,7 @@
     <title>Non-linear least squares</title>
     <meta charset="utf-8" />
     <meta name="author" content="Nathaniel Grimes" />
-    <script src="libs/header-attrs-2.17/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.19/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/uwm-fonts.css" rel="stylesheet" />
     <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
     <script src="libs/tile-view-0.2.6/tile-view.js"></script>
@@ -78,6 +78,48 @@ class: center, middle, inverse, title-slide
 ```r
 library(tidyverse)
 remotes::install_github("lter/lterdatasampler")
+```
+
+```
+## ── R CMD build ─────────────────────────────────────────────────────────────────
+##   
+  
+  
+   checking for file 'C:\Users\Nathan\AppData\Local\Temp\Rtmpye0x1p\remotes451857d04287\lter-lterdatasampler-b268386/DESCRIPTION' ...
+  
+   checking for file 'C:\Users\Nathan\AppData\Local\Temp\Rtmpye0x1p\remotes451857d04287\lter-lterdatasampler-b268386/DESCRIPTION' ... 
+  
+✔  checking for file 'C:\Users\Nathan\AppData\Local\Temp\Rtmpye0x1p\remotes451857d04287\lter-lterdatasampler-b268386/DESCRIPTION'
+## 
+  
+  
+  
+─  preparing 'lterdatasampler': (363ms)
+##    checking DESCRIPTION meta-information ...
+  
+   checking DESCRIPTION meta-information ... 
+  
+✔  checking DESCRIPTION meta-information
+## 
+  
+  
+  
+─  checking for LF line-endings in source and make files and shell scripts
+## 
+  
+─  checking for empty or unneeded directories
+## 
+  
+  
+  
+─  building 'lterdatasampler_0.1.0.tar.gz'
+## 
+  
+   
+## 
+```
+
+```r
 library(lterdatasampler)
 library(knitr)
 library(broom)
@@ -146,7 +188,7 @@ Hint: `\(\hat{\beta}=\frac{\sum^n_{i=1}(x_i-\bar{x})(y_i-\bar{y})}{\sum^n_{i=1}(
 
 ## Linear relationship between predictor (y) and variables (x)
 
-## Last week we started branching away from linear models with logistic regressions 
+## Last week we started branching away from strictly linear models with logistic regressions 
 
 ## But the link functions typically still maintain a linear form
 
@@ -249,9 +291,9 @@ $$
 
 ## NLS excels when we have a known equation and want to fit parameters 
 
-## There is no `\(R^2\)` value to compare across model specifications, but we can still test model performance using AIC or Cross Fold Validation through RMSE (In lab this week!)
+## There is no `\(R^2\)` value to compare across model specifications, but we can still test model performance using AIC, Cross Fold Validation or RMSE (In lab this week!)
 
-## NLS is particularly useful for time series, but we will cover other methods for time series later in class.
+## NLS is particularly useful for time series as we'll see in lab.
 
 ---
 
@@ -643,7 +685,7 @@ background-size: cover
 
 ## Many flavors and varieties of optimization
 
-## As simply as possible
+## As general as possible
 
 
 `$$\begin{aligned}

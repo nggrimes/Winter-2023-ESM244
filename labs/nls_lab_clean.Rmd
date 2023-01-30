@@ -18,7 +18,7 @@ library(here)
 
 
 ```{r}
-load(here("nls_lab","fish_data.Rdata"))
+load(here("labs","data","fish_data.Rdata"))
 ```
 
 
