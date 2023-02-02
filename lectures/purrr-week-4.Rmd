@@ -27,6 +27,21 @@ xaringanExtra::use_extra_styles(
 
 ```
 
+# Announcements
+
+Vote for your favorite dataset on slack for assignment 2!
+
+```{r, echo=FALSE,out.width="75%",fig.align='center'}
+knitr::include_graphics(here::here("lectures","img","lizards_slack.png"))
+```
+
+
+```{r,echo=FALSE,fig.align='center'}
+knitr::include_graphics('https://media.giphy.com/media/ONdPKin6YdDpX24Lij/giphy-downsized-large.gif')
+```
+
+
+---
 
 # Packages to follow along with
 
@@ -35,6 +50,8 @@ xaringanExtra::use_extra_styles(
 library(tidyverse)
 library(knitr)
 library(kableExtra)
+library(tictoc)
+library(furrr)
 ```
 ]
 
