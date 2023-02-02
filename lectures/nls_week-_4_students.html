@@ -88,46 +88,6 @@ class: center, middle, inverse, title-slide
 ```r
 library(tidyverse)
 remotes::install_github("lter/lterdatasampler")
-```
-
-```
-## ── R CMD build ─────────────────────────────────────────────────────────────────
-##   
-  
-  
-   checking for file 'C:\Users\natha\AppData\Local\Temp\RtmpcvhLv7\remotes523c62d74f6b\lter-lterdatasampler-b268386/DESCRIPTION' ...
-  
-✔  checking for file 'C:\Users\natha\AppData\Local\Temp\RtmpcvhLv7\remotes523c62d74f6b\lter-lterdatasampler-b268386/DESCRIPTION' (373ms)
-## 
-  
-  
-  
-─  preparing 'lterdatasampler': (603ms)
-##    checking DESCRIPTION meta-information ...
-  
-   checking DESCRIPTION meta-information ... 
-  
-✔  checking DESCRIPTION meta-information
-## 
-  
-  
-  
-─  checking for LF line-endings in source and make files and shell scripts
-## 
-  
-─  checking for empty or unneeded directories
-## 
-  
-  
-  
-─  building 'lterdatasampler_0.1.0.tar.gz'
-## 
-  
-   
-## 
-```
-
-```r
 library(lterdatasampler)
 library(knitr)
 library(broom)
@@ -149,7 +109,7 @@ class: title-slide-section-gold, center, middle
 
 .pull-left[
 
-&lt;img src="nls_week-4_files/figure-html/mtcars-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="nls_week-_4_students_files/figure-html/mtcars-1.png" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -179,7 +139,7 @@ Hint: `\(\hat{\beta}=\frac{\sum^n_{i=1}(x_i-\bar{x})(y_i-\bar{y})}{\sum^n_{i=1}(
 ##.white[blank]
 
 .pull-left[
-&lt;img src="nls_week-4_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="nls_week-_4_students_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;" /&gt;
 
 ]
 .pull-right[### How does OLS fit the line?
@@ -209,7 +169,7 @@ $$
 
 # But what if we get something like this?
 
-&lt;img src="nls_week-4_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="nls_week-_4_students_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -381,7 +341,7 @@ knz_bison_age &lt;- knz_bison %&gt;%
 ```
 
 
-&lt;img src="nls_week-4_files/figure-html/bisongraph-1.png" width="35%" style="display: block; margin: auto;" /&gt;
+&lt;img src="nls_week-_4_students_files/figure-html/bisongraph-1.png" width="35%" style="display: block; margin: auto;" /&gt;
 
 ---
 # Use R Built in functions
@@ -423,7 +383,7 @@ df_nls&lt;-nls(formula=   # Model we want to estimate,
 ]
 
 .pull-right[
-&lt;img src="nls_week-4_files/figure-html/gompertz-1.png" width="75%" /&gt;
+&lt;img src="nls_week-_4_students_files/figure-html/gompertz-1.png" width="75%" /&gt;
 
 ]
 
@@ -485,9 +445,21 @@ class: bold-last-item
 # Applied guessing
 
 
-&lt;iframe src="https://nggrimes.shinyapps.io/bison_app" style="width: 1000px; height: 400px; border: 0"&gt;&lt;/iframe&gt;
-
+.pull-left[
 `$$Weight=b1*exp(-exp(-b2*(age-b3)))$$`
+`\(b1\)` is the asymptotic body mass. How big can bison get?
+
+`\(b2\)` is the instantaneous growth rate which can be a little hard to visually its effect
+
+`\(b3\)` is the inflection age when bison calves start slowing their growth down.
+
+Look at the data and try to estimate where those parameters generally line up
+]
+
+.pull-right[
+![](nls_week-_4_students_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+]
+
 ---
 
 # Apply guesses
@@ -598,7 +570,7 @@ glance(b_gompertz) %&gt;%
 
 
 
-&lt;img src="nls_week-4_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="nls_week-_4_students_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 # Model results indicate the lowest possible sum of squared error

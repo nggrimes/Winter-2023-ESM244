@@ -491,9 +491,23 @@ class: bold-last-item
 # Applied guessing
 
 
-<iframe src="https://nggrimes.shinyapps.io/bison_app" style="width: 1000px; height: 400px; border: 0"></iframe>
-
+.pull-left[
 $$Weight=b1*exp(-exp(-b2*(age-b3)))$$
+$b1$ is the asymptotic body mass. How big can bison get?
+
+$b2$ is the instantaneous growth rate which can be a little hard to visually its effect
+
+$b3$ is the inflection age when bison calves start slowing their growth down.
+
+Look at the data and try to estimate where those parameters generally line up
+]
+
+.pull-right[
+```{r}
+knz_plt+geom_line(data=df1,aes(x=age,y=weight),color="blue",size=3)
+```
+]
+
 ---
 
 # Apply guesses
