@@ -139,6 +139,8 @@ calc_rmse <- function(x, y) {
   return(rmse)
 }
 
+set.seed(2)
+
 folds=10
 
 n_iter=10  # do folds 10 times
@@ -148,8 +150,10 @@ fold_vec=rep(1:folds,length.out=nrow(seawater_raw)*n_iter)
 
 fold_mat=matrix(fold_vec,ncol=n_iter)
 
+
 samp=as.data.frame(fold_mat) %>% 
-  map(.x=.,~sample(.x,size=nrow(seawater_raw),replace=FALSE))
+  map(.x=.,~sample(.x,size=nrow(seawater_raw),replace=FALSE)) 
+
 
 #Set up storage matrices
 
